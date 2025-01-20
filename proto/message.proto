@@ -1,0 +1,47 @@
+syntax = "proto3";
+option go_package = "transport.com/http_api";
+
+import "google/protobuf/timestamp.proto";
+
+message SensorData{
+  enum Type {
+    TEMPERATURE = 0;
+    HUMIDITY    = 1;
+    CO2         = 2;
+    PUMP        = 3;
+    LAMP        = 4;
+    FUN         = 5;
+  }
+  string id   = 1;
+  string name = 2;
+  float value = 3;
+  Type type   = 4;
+
+}
+
+message GroupData{
+  string id                       = 1;
+  string name                     = 2;
+  repeated SensorData sensorsData = 3;
+}
+
+message SensorsRequest{}
+
+message SensorsResponse{
+  google.protobuf.Timestamp time  = 1;
+  repeated GroupData groupsData   = 2;
+}
+
+message SensorDataPoint{
+  google.protobuf.Timestamp time  = 1;
+  float value                     = 2;
+}
+
+message HistorySensorDataRequest{
+  string id = 1;
+}
+
+message HistorySensorsDataResponse{
+  string id                           = 1;
+  repeated SensorDataPoint sensorData = 2;
+}

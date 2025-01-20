@@ -1,0 +1,9 @@
+syntax = "proto3";
+option go_package = "transport.com/http_api";
+
+import "message.proto";
+
+service HomeSyncGrpcService {
+  rpc SensorsRequest(SensorsRequest) returns (SensorsResponse);
+  rpc HistorySensorDataRequest(HistorySensorDataRequest) returns (HistorySensorsDataResponse);
+}
