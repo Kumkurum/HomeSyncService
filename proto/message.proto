@@ -1,7 +1,13 @@
 syntax = "proto3";
-option go_package = "transport.com/http_api";
+option go_package = "transport.com/grpc";
 
 import "google/protobuf/timestamp.proto";
+
+message BasicSensorData{
+  google.protobuf.Timestamp time  = 1;
+  float value                     = 2;
+}
+
 
 message SensorData{
   enum Type {
@@ -13,9 +19,8 @@ message SensorData{
     FUN         = 5;
   }
   string id   = 1;
-  string name = 2;
-  float value = 3;
-  Type type   = 4;
+  Type type   = 2;
+  BasicSensorData value = 3;
 
 }
 
@@ -32,16 +37,11 @@ message SensorsResponse{
   repeated GroupData groupsData   = 2;
 }
 
-message SensorDataPoint{
-  google.protobuf.Timestamp time  = 1;
-  float value                     = 2;
-}
-
 message HistorySensorDataRequest{
   string id = 1;
 }
 
 message HistorySensorsDataResponse{
   string id                           = 1;
-  repeated SensorDataPoint sensorData = 2;
+  repeated BasicSensorData sensorData = 2;
 }

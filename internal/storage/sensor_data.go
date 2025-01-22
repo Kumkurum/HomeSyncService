@@ -1,6 +1,6 @@
 package storage
 
-type SensorData struct {
-	TimeStamp uint64
-	Value     float64
-}
+//type SensorData struct {
+//	TimeStamp uint64
+//	Value     float64
+//}
