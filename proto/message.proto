@@ -26,8 +26,7 @@ message SensorData{
 
 message GroupData{
   string id                       = 1;
-  string name                     = 2;
-  repeated SensorData sensorsData = 3;
+  repeated SensorData sensorsData = 2;
 }
 
 message SensorsRequest{}
