@@ -1,9 +1,9 @@
 syntax = "proto3";
-option go_package = "transport.com/grpc";
+option go_package = "transport.com/homeSyncGrpc";
 
 import "message.proto";
 
 service HomeSyncGrpcService {
-  rpc SensorsRequest(SensorsRequest) returns (SensorsResponse);
-  rpc HistorySensorDataRequest(HistorySensorDataRequest) returns (HistorySensorsDataResponse);
+  rpc GetSensors(SensorsRequest) returns (SensorsResponse);
+  rpc GetHistorySensorData(HistorySensorDataRequest) returns (HistorySensorsDataResponse);
 }

@@ -37,8 +37,8 @@ func TestGetData(t *testing.T) {
 	sensor.AddData(2.0)
 	sensor.AddData(3.0)
 	sensor.AddData(4.0)
-	if sensor.Get().Value != 4.0 {
-		t.Errorf("Wrong value %f was expected : %f", sensor.Get().Value, 4.0)
+	if sensor.Get().BasicData.Value != 4.0 {
+		t.Errorf("Wrong value %f was expected : %f", sensor.Get().BasicData.Value, 4.0)
 	}
 }
 
