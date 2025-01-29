@@ -32,15 +32,15 @@ func (s *Storage) UpdateSensorValue(blockId string, sensorId string, typeSensor 
 	}
 	s.Blocks[blockId].UpdateSensor(sensorId, typeSensor, value)
 }
-func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (error, *homeSyncGrpc.HistorySensorsDataResponse) {
+func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*homeSyncGrpc.HistorySensorsDataResponse, error) {
 	s.RLock()
 	defer s.RUnlock()
 	_, err := s.Blocks[blockId].GetSensor(sensorId)
 	if err != nil {
-		return fmt.Errorf("not Found sensor with %s id", sensorId), nil
+		return nil, fmt.Errorf("not Found sensor with %s id", sensorId)
 	}
 	sensor, _ := s.Blocks[blockId].GetSensor(sensorId)
-	return nil, sensor.GetProto()
+	return sensor.GetProto(), nil
 }
 
 func (s *Storage) GetSensorsData() *homeSyncGrpc.SensorsResponse {

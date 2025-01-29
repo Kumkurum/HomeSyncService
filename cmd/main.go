@@ -1,21 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"HomeSyncService/internal/grpc_service"
+	"HomeSyncService/internal/storage"
+	homeSyncGrpc "HomeSyncService/internal/transport"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
+//homeSyncStorage:=homeSyncStorage.NewHomeSyncStorage(10)
 
 func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "gopher"
-	fmt.Println("Hello and welcome, %s!", s)
-
-	for i := 1; i <= 5; i++ {
-		//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-		// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-		fmt.Println("i =", 100/i)
+	var str = storage.NewStorage(10)
+	// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
+	s := grpc.NewServer()
+	homeSyncGrpc.RegisterHomeSyncGrpcServiceServer(s, grpc_service.NewGrpcService(str))
+	// Открыть порт 50051 для приема сообщений
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	// Начать цикл приема и обработку запросов
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 }

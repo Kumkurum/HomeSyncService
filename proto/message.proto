@@ -37,7 +37,8 @@ message SensorsResponse{
 }
 
 message HistorySensorDataRequest{
-  string id = 1;
+  string blockId  = 1;
+  string sensorId = 2;
 }
 
 message HistorySensorsDataResponse{
