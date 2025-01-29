@@ -45,3 +45,23 @@ message HistorySensorsDataResponse{
   string id                           = 1;
   repeated BasicSensorData sensorData = 2;
 }
+
+message SensorHttpData{
+  string sensorId = 1;
+  float value = 2;
+}
+message BlockHttpData{
+  string blockId = 1;
+  repeated SensorHttpData sensorsData = 2;
+}
+
+message SetSensorData{
+  repeated BlockHttpData blocksData = 1;
+}
+message Error{
+  enum ErrorCode{
+    OK = 0;
+    ERROR = 1;
+  }
+  ErrorCode code = 1;
+}

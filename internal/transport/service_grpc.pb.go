@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	HomeSyncGrpcService_GetSensors_FullMethodName           = "/HomeSyncGrpcService/GetSensors"
 	HomeSyncGrpcService_GetHistorySensorData_FullMethodName = "/HomeSyncGrpcService/GetHistorySensorData"
+	HomeSyncGrpcService_SetData_FullMethodName              = "/HomeSyncGrpcService/SetData"
 )
 
 // HomeSyncGrpcServiceClient is the client API for HomeSyncGrpcService service.
@@ -29,6 +30,7 @@ const (
 type HomeSyncGrpcServiceClient interface {
 	GetSensors(ctx context.Context, in *SensorsRequest, opts ...grpc.CallOption) (*SensorsResponse, error)
 	GetHistorySensorData(ctx context.Context, in *HistorySensorDataRequest, opts ...grpc.CallOption) (*HistorySensorsDataResponse, error)
+	SetData(ctx context.Context, in *SetSensorData, opts ...grpc.CallOption) (*Error, error)
 }
 
 type homeSyncGrpcServiceClient struct {
@@ -59,12 +61,23 @@ func (c *homeSyncGrpcServiceClient) GetHistorySensorData(ctx context.Context, in
 	return out, nil
 }
 
+func (c *homeSyncGrpcServiceClient) SetData(ctx context.Context, in *SetSensorData, opts ...grpc.CallOption) (*Error, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Error)
+	err := c.cc.Invoke(ctx, HomeSyncGrpcService_SetData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HomeSyncGrpcServiceServer is the server API for HomeSyncGrpcService service.
 // All implementations must embed UnimplementedHomeSyncGrpcServiceServer
 // for forward compatibility.
 type HomeSyncGrpcServiceServer interface {
 	GetSensors(context.Context, *SensorsRequest) (*SensorsResponse, error)
 	GetHistorySensorData(context.Context, *HistorySensorDataRequest) (*HistorySensorsDataResponse, error)
+	SetData(context.Context, *SetSensorData) (*Error, error)
 	mustEmbedUnimplementedHomeSyncGrpcServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedHomeSyncGrpcServiceServer) GetSensors(context.Context, *Senso
 }
 func (UnimplementedHomeSyncGrpcServiceServer) GetHistorySensorData(context.Context, *HistorySensorDataRequest) (*HistorySensorsDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHistorySensorData not implemented")
+}
+func (UnimplementedHomeSyncGrpcServiceServer) SetData(context.Context, *SetSensorData) (*Error, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetData not implemented")
 }
 func (UnimplementedHomeSyncGrpcServiceServer) mustEmbedUnimplementedHomeSyncGrpcServiceServer() {}
 func (UnimplementedHomeSyncGrpcServiceServer) testEmbeddedByValue()                             {}
@@ -138,6 +154,24 @@ func _HomeSyncGrpcService_GetHistorySensorData_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HomeSyncGrpcService_SetData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSensorData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HomeSyncGrpcServiceServer).SetData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HomeSyncGrpcService_SetData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HomeSyncGrpcServiceServer).SetData(ctx, req.(*SetSensorData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HomeSyncGrpcService_ServiceDesc is the grpc.ServiceDesc for HomeSyncGrpcService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var HomeSyncGrpcService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHistorySensorData",
 			Handler:    _HomeSyncGrpcService_GetHistorySensorData_Handler,
+		},
+		{
+			MethodName: "SetData",
+			Handler:    _HomeSyncGrpcService_SetData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -79,6 +79,52 @@ func (SensorData_Type) EnumDescriptor() ([]byte, []int) {
 	return file_message_proto_rawDescGZIP(), []int{1, 0}
 }
 
+type Error_ErrorCode int32
+
+const (
+	Error_OK    Error_ErrorCode = 0
+	Error_ERROR Error_ErrorCode = 1
+)
+
+// Enum value maps for Error_ErrorCode.
+var (
+	Error_ErrorCode_name = map[int32]string{
+		0: "OK",
+		1: "ERROR",
+	}
+	Error_ErrorCode_value = map[string]int32{
+		"OK":    0,
+		"ERROR": 1,
+	}
+)
+
+func (x Error_ErrorCode) Enum() *Error_ErrorCode {
+	p := new(Error_ErrorCode)
+	*p = x
+	return p
+}
+
+func (x Error_ErrorCode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Error_ErrorCode) Descriptor() protoreflect.EnumDescriptor {
+	return file_message_proto_enumTypes[1].Descriptor()
+}
+
+func (Error_ErrorCode) Type() protoreflect.EnumType {
+	return &file_message_proto_enumTypes[1]
+}
+
+func (x Error_ErrorCode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Error_ErrorCode.Descriptor instead.
+func (Error_ErrorCode) EnumDescriptor() ([]byte, []int) {
+	return file_message_proto_rawDescGZIP(), []int{10, 0}
+}
+
 type BasicSensorData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Time          *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
@@ -435,6 +481,198 @@ func (x *HistorySensorsDataResponse) GetSensorData() []*BasicSensorData {
 	return nil
 }
 
+type SensorHttpData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SensorId      string                 `protobuf:"bytes,1,opt,name=sensorId,proto3" json:"sensorId,omitempty"`
+	Value         float32                `protobuf:"fixed32,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SensorHttpData) Reset() {
+	*x = SensorHttpData{}
+	mi := &file_message_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SensorHttpData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SensorHttpData) ProtoMessage() {}
+
+func (x *SensorHttpData) ProtoReflect() protoreflect.Message {
+	mi := &file_message_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SensorHttpData.ProtoReflect.Descriptor instead.
+func (*SensorHttpData) Descriptor() ([]byte, []int) {
+	return file_message_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *SensorHttpData) GetSensorId() string {
+	if x != nil {
+		return x.SensorId
+	}
+	return ""
+}
+
+func (x *SensorHttpData) GetValue() float32 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+type BlockHttpData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BlockId       string                 `protobuf:"bytes,1,opt,name=blockId,proto3" json:"blockId,omitempty"`
+	SensorsData   []*SensorHttpData      `protobuf:"bytes,2,rep,name=sensorsData,proto3" json:"sensorsData,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BlockHttpData) Reset() {
+	*x = BlockHttpData{}
+	mi := &file_message_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BlockHttpData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BlockHttpData) ProtoMessage() {}
+
+func (x *BlockHttpData) ProtoReflect() protoreflect.Message {
+	mi := &file_message_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BlockHttpData.ProtoReflect.Descriptor instead.
+func (*BlockHttpData) Descriptor() ([]byte, []int) {
+	return file_message_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *BlockHttpData) GetBlockId() string {
+	if x != nil {
+		return x.BlockId
+	}
+	return ""
+}
+
+func (x *BlockHttpData) GetSensorsData() []*SensorHttpData {
+	if x != nil {
+		return x.SensorsData
+	}
+	return nil
+}
+
+type SetSensorData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BlocksData    []*BlockHttpData       `protobuf:"bytes,1,rep,name=blocksData,proto3" json:"blocksData,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetSensorData) Reset() {
+	*x = SetSensorData{}
+	mi := &file_message_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetSensorData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetSensorData) ProtoMessage() {}
+
+func (x *SetSensorData) ProtoReflect() protoreflect.Message {
+	mi := &file_message_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetSensorData.ProtoReflect.Descriptor instead.
+func (*SetSensorData) Descriptor() ([]byte, []int) {
+	return file_message_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *SetSensorData) GetBlocksData() []*BlockHttpData {
+	if x != nil {
+		return x.BlocksData
+	}
+	return nil
+}
+
+type Error struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          Error_ErrorCode        `protobuf:"varint,1,opt,name=code,proto3,enum=Error_ErrorCode" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Error) Reset() {
+	*x = Error{}
+	mi := &file_message_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Error) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Error) ProtoMessage() {}
+
+func (x *Error) ProtoReflect() protoreflect.Message {
+	mi := &file_message_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Error.ProtoReflect.Descriptor instead.
+func (*Error) Descriptor() ([]byte, []int) {
+	return file_message_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Error) GetCode() Error_ErrorCode {
+	if x != nil {
+		return x.Code
+	}
+	return Error_OK
+}
+
 var File_message_proto protoreflect.FileDescriptor
 
 var file_message_proto_rawDesc = []byte{
@@ -482,9 +720,29 @@ var file_message_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x0a, 0x73, 0x65, 0x6e, 0x73,
 	0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x42,
 	0x61, 0x73, 0x69, 0x63, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x0a,
-	0x73, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x42, 0x1c, 0x5a, 0x1a, 0x74, 0x72,
-	0x61, 0x6e, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x6f, 0x6d, 0x65,
-	0x53, 0x79, 0x6e, 0x63, 0x47, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x22, 0x42, 0x0a, 0x0e, 0x53, 0x65,
+	0x6e, 0x73, 0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x44, 0x61, 0x74, 0x61, 0x12, 0x1a, 0x0a, 0x08,
+	0x73, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x73, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x5c,
+	0x0a, 0x0d, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x48, 0x74, 0x74, 0x70, 0x44, 0x61, 0x74, 0x61, 0x12,
+	0x18, 0x0a, 0x07, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x49, 0x64, 0x12, 0x31, 0x0a, 0x0b, 0x73, 0x65, 0x6e,
+	0x73, 0x6f, 0x72, 0x73, 0x44, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f,
+	0x2e, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x48, 0x74, 0x74, 0x70, 0x44, 0x61, 0x74, 0x61, 0x52,
+	0x0b, 0x73, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x73, 0x44, 0x61, 0x74, 0x61, 0x22, 0x3f, 0x0a, 0x0d,
+	0x53, 0x65, 0x74, 0x53, 0x65, 0x6e, 0x73, 0x6f, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x2e, 0x0a,
+	0x0a, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x44, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x0e, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x48, 0x74, 0x74, 0x70, 0x44, 0x61, 0x74,
+	0x61, 0x52, 0x0a, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x44, 0x61, 0x74, 0x61, 0x22, 0x4d, 0x0a,
+	0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x12, 0x24, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x10, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x2e, 0x45, 0x72, 0x72,
+	0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x22, 0x1e, 0x0a, 0x09,
+	0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x4b, 0x10,
+	0x00, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x52, 0x52, 0x4f, 0x52, 0x10, 0x01, 0x42, 0x1c, 0x5a, 0x1a,
+	0x74, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x6f,
+	0x6d, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x47, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -499,32 +757,40 @@ func file_message_proto_rawDescGZIP() []byte {
 	return file_message_proto_rawDescData
 }
 
-var file_message_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_message_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_message_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_message_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_message_proto_goTypes = []any{
 	(SensorData_Type)(0),               // 0: SensorData.Type
-	(*BasicSensorData)(nil),            // 1: BasicSensorData
-	(*SensorData)(nil),                 // 2: SensorData
-	(*GroupData)(nil),                  // 3: GroupData
-	(*SensorsRequest)(nil),             // 4: SensorsRequest
-	(*SensorsResponse)(nil),            // 5: SensorsResponse
-	(*HistorySensorDataRequest)(nil),   // 6: HistorySensorDataRequest
-	(*HistorySensorsDataResponse)(nil), // 7: HistorySensorsDataResponse
-	(*timestamppb.Timestamp)(nil),      // 8: google.protobuf.Timestamp
+	(Error_ErrorCode)(0),               // 1: Error.ErrorCode
+	(*BasicSensorData)(nil),            // 2: BasicSensorData
+	(*SensorData)(nil),                 // 3: SensorData
+	(*GroupData)(nil),                  // 4: GroupData
+	(*SensorsRequest)(nil),             // 5: SensorsRequest
+	(*SensorsResponse)(nil),            // 6: SensorsResponse
+	(*HistorySensorDataRequest)(nil),   // 7: HistorySensorDataRequest
+	(*HistorySensorsDataResponse)(nil), // 8: HistorySensorsDataResponse
+	(*SensorHttpData)(nil),             // 9: SensorHttpData
+	(*BlockHttpData)(nil),              // 10: BlockHttpData
+	(*SetSensorData)(nil),              // 11: SetSensorData
+	(*Error)(nil),                      // 12: Error
+	(*timestamppb.Timestamp)(nil),      // 13: google.protobuf.Timestamp
 }
 var file_message_proto_depIdxs = []int32{
-	8, // 0: BasicSensorData.time:type_name -> google.protobuf.Timestamp
-	0, // 1: SensorData.type:type_name -> SensorData.Type
-	1, // 2: SensorData.basicData:type_name -> BasicSensorData
-	2, // 3: GroupData.sensorsData:type_name -> SensorData
-	8, // 4: SensorsResponse.time:type_name -> google.protobuf.Timestamp
-	3, // 5: SensorsResponse.groupsData:type_name -> GroupData
-	1, // 6: HistorySensorsDataResponse.sensorData:type_name -> BasicSensorData
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	13, // 0: BasicSensorData.time:type_name -> google.protobuf.Timestamp
+	0,  // 1: SensorData.type:type_name -> SensorData.Type
+	2,  // 2: SensorData.basicData:type_name -> BasicSensorData
+	3,  // 3: GroupData.sensorsData:type_name -> SensorData
+	13, // 4: SensorsResponse.time:type_name -> google.protobuf.Timestamp
+	4,  // 5: SensorsResponse.groupsData:type_name -> GroupData
+	2,  // 6: HistorySensorsDataResponse.sensorData:type_name -> BasicSensorData
+	9,  // 7: BlockHttpData.sensorsData:type_name -> SensorHttpData
+	10, // 8: SetSensorData.blocksData:type_name -> BlockHttpData
+	1,  // 9: Error.code:type_name -> Error.ErrorCode
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_message_proto_init() }
@@ -537,8 +803,8 @@ func file_message_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_message_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   7,
+			NumEnums:      2,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
