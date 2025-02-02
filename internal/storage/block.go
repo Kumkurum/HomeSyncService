@@ -44,13 +44,12 @@ func (b *Block) GetSensor(id string) (*Sensor, error) {
 func (b *Block) GetBlockSensors() *homeSyncGrpc.GroupData {
 	result := &homeSyncGrpc.GroupData{
 		Id:          b.Id,
-		SensorsData: make([]*homeSyncGrpc.SensorData, len(b.sensors)),
+		SensorsData: make([]*homeSyncGrpc.SensorData, 0, len(b.sensors)),
 	}
-	iter := 0
 	for sensorId, sensor := range b.sensors {
-		result.SensorsData[iter] = sensor.Get()
-		result.SensorsData[iter].Id = sensorId
-		iter++
+		sensorData := sensor.Get()
+		sensorData.Id = sensorId
+		result.SensorsData = append(result.SensorsData, sensorData)
 	}
 	return result
 }

@@ -32,6 +32,7 @@ func TestUpdateSensor(t *testing.T) {
 	}
 }
 
+// Может быть ошибка потому как это map, но пофиг на этот тест
 func TestGetBlockSensors(t *testing.T) {
 	block.UpdateSensor("first", 1, 3.1)
 	block.UpdateSensor("first", 1, 3.2)

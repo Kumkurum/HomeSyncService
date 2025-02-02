@@ -10,15 +10,15 @@ import (
 // Storage - Структура для хранения информации о датчиках, разбитая на блоки, объединенная по каким-то принципам
 type Storage struct {
 	sync.RWMutex
-	Blocks     map[string]*Block
+	blocks     map[string]*Block
 	maxSize    int                    //Максимальных размер хранения информации о датчике ( история изменений)
-	LastUpdate *timestamppb.Timestamp //Время послденего обновления
+	lastUpdate *timestamppb.Timestamp //Время послденего обновления
 }
 
 // NewStorage - Создание нового хранилища
 func NewStorage(maxSize int) *Storage {
 	return &Storage{
-		Blocks:  make(map[string]*Block),
+		blocks:  make(map[string]*Block),
 		maxSize: maxSize,
 	}
 }
@@ -27,19 +27,19 @@ func NewStorage(maxSize int) *Storage {
 func (s *Storage) UpdateSensorValue(blockId string, sensorId string, typeSensor int, value float32) {
 	s.Lock()
 	defer s.Unlock()
-	if _, ok := s.Blocks[blockId]; ok == false {
-		s.Blocks[blockId] = NewBlock(blockId, s.maxSize)
+	if _, ok := s.blocks[blockId]; ok == false {
+		s.blocks[blockId] = NewBlock(blockId, s.maxSize)
 	}
-	s.Blocks[blockId].UpdateSensor(sensorId, typeSensor, value)
+	s.blocks[blockId].UpdateSensor(sensorId, typeSensor, value)
 }
 func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*homeSyncGrpc.HistorySensorsDataResponse, error) {
 	s.RLock()
 	defer s.RUnlock()
-	_, err := s.Blocks[blockId].GetSensor(sensorId)
+	_, err := s.blocks[blockId].GetSensor(sensorId)
 	if err != nil {
 		return nil, fmt.Errorf("not Found sensor with %s id", sensorId)
 	}
-	sensor, _ := s.Blocks[blockId].GetSensor(sensorId)
+	sensor, _ := s.blocks[blockId].GetSensor(sensorId)
 	return sensor.GetProto(), nil
 }
 
@@ -47,10 +47,10 @@ func (s *Storage) GetSensorsData() *homeSyncGrpc.SensorsResponse {
 	s.RLock()
 	defer s.RUnlock()
 	result := &homeSyncGrpc.SensorsResponse{
-		Time:       s.LastUpdate,
-		GroupsData: make([]*homeSyncGrpc.GroupData, 0, len(s.Blocks)),
+		Time:       s.lastUpdate,
+		GroupsData: make([]*homeSyncGrpc.GroupData, 0, len(s.blocks)),
 	}
-	for blockId, block := range s.Blocks {
+	for blockId, block := range s.blocks {
 		blockData := block.GetBlockSensors()
 		blockData.Id = blockId
 		result.GroupsData = append(result.GroupsData, blockData)
