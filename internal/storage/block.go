@@ -26,7 +26,7 @@ func NewBlock(id string, maxSize int) *Block {
 func (b *Block) UpdateSensor(id string, typeSensor int, value float32) {
 	_, ok := b.sensors[id]
 	if !ok {
-		b.sensors[id] = NewSensor(id, typeSensor, b.MaxSize)
+		b.sensors[id] = NewSensor(typeSensor, b.MaxSize)
 	}
 	b.sensors[id].AddData(value)
 }

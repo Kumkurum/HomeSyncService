@@ -7,6 +7,7 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
 	"testing"
 	"time"
 )
@@ -19,13 +20,11 @@ var testData = []homeSyncGrpc.SensorData{
 			Time:  timestamppb.New(time.Now()),
 			Value: 1,
 		},
-	},
-	homeSyncGrpc.SensorData{
-		Id:   "testSensor0",
-		Type: 0,
-		BasicData: &homeSyncGrpc.BasicSensorData{
-			Time:  timestamppb.New(time.Now()),
-			Value: 1,
+		Boundary: &homeSyncGrpc.Boundary{
+			Value1: 1,
+			Value2: 2,
+			Value3: 3,
+			Value4: 4,
 		},
 	},
 	homeSyncGrpc.SensorData{
@@ -35,13 +34,11 @@ var testData = []homeSyncGrpc.SensorData{
 			Time:  timestamppb.New(time.Now()),
 			Value: 1,
 		},
-	},
-	homeSyncGrpc.SensorData{
-		Id:   "testSensor0",
-		Type: 0,
-		BasicData: &homeSyncGrpc.BasicSensorData{
-			Time:  timestamppb.New(time.Now()),
-			Value: 1,
+		Boundary: &homeSyncGrpc.Boundary{
+			Value1: 1,
+			Value2: 2,
+			Value3: 3,
+			Value4: 4,
 		},
 	},
 	homeSyncGrpc.SensorData{
@@ -50,6 +47,40 @@ var testData = []homeSyncGrpc.SensorData{
 		BasicData: &homeSyncGrpc.BasicSensorData{
 			Time:  timestamppb.New(time.Now()),
 			Value: 1,
+		},
+		Boundary: &homeSyncGrpc.Boundary{
+			Value1: 1,
+			Value2: 2,
+			Value3: 3,
+			Value4: 4,
+		},
+	},
+	homeSyncGrpc.SensorData{
+		Id:   "testSensor0",
+		Type: 0,
+		BasicData: &homeSyncGrpc.BasicSensorData{
+			Time:  timestamppb.New(time.Now()),
+			Value: 1,
+		},
+		Boundary: &homeSyncGrpc.Boundary{
+			Value1: 1,
+			Value2: 2,
+			Value3: 3,
+			Value4: 4,
+		},
+	},
+	homeSyncGrpc.SensorData{
+		Id:   "testSensor0",
+		Type: 0,
+		BasicData: &homeSyncGrpc.BasicSensorData{
+			Time:  timestamppb.New(time.Now()),
+			Value: 1,
+		},
+		Boundary: &homeSyncGrpc.Boundary{
+			Value1: 1,
+			Value2: 2,
+			Value3: 3,
+			Value4: 4,
 		},
 	},
 }
@@ -61,7 +92,7 @@ func runServer() {
 	}
 
 	// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
-	grpc_service.NewGrpcService(str, "50051")
+	grpc_service.NewGrpcService(str, "50051", "kum")
 }
 
 func TestRequest(t *testing.T) {
@@ -78,24 +109,27 @@ func TestRequest(t *testing.T) {
 	defer conn.Close()
 
 	client := homeSyncGrpc.NewHomeSyncGrpcServiceClient(conn)
-	request := &homeSyncGrpc.SensorsRequest{}
+	request := &homeSyncGrpc.SensorsRequest{
+		Token: "kum",
+	}
 	response, err := client.GetSensors(context.Background(), request)
 
 	if err != nil {
 		t.Errorf("fail to dial: %v", err)
 	}
-	if len(response.GroupsData) != 1 {
-		t.Errorf("expect response groups data, but got %v", response.GroupsData)
+	if len(response.GetSuccess().GroupsData) != 1 {
+		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
 	}
 
-	if response.GroupsData[0].SensorsData[0].Id != testData[0].Id {
-		t.Errorf("expect response groups data, but got %v", response.GroupsData)
+	if response.GetSuccess().GroupsData[0].SensorsData[0].Id != testData[0].Id {
+		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
 	}
-	if response.GroupsData[0].SensorsData[0].BasicData.Value != testData[len(testData)-1].BasicData.Value {
-		t.Errorf("expect response groups data, but got %v", response.GroupsData)
+	if response.GetSuccess().GroupsData[0].SensorsData[0].BasicData.Value != testData[len(testData)-1].BasicData.Value {
+		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
 	}
 
 	requestH := &homeSyncGrpc.HistorySensorDataRequest{
+		Token:    "kum",
 		BlockId:  "testBlock",
 		SensorId: "testSensor0",
 	}
@@ -103,12 +137,12 @@ func TestRequest(t *testing.T) {
 	if err != nil {
 		t.Errorf("fail to dial: %v", err)
 	}
-	if len(responseH.SensorData) != len(testData) {
-		t.Errorf("error len %d, but reale len is %d", len(responseH.SensorData), len(testData))
+	if len(responseH.GetSuccess().SensorData) != len(testData) {
+		t.Errorf("error len %d, but reale len is %d", len(responseH.GetSuccess().SensorData), len(testData))
 	}
 
-	if responseH.SensorData[0].Value != testData[0].BasicData.Value {
-		t.Errorf("expect response data %v, but got %v", responseH.SensorData[0].Value, testData[0].BasicData.Value)
+	if responseH.GetSuccess().SensorData[0].Value != testData[0].BasicData.Value {
+		t.Errorf("expect response data %v, but got %v", responseH.GetSuccess().SensorData[0].Value, testData[0].BasicData.Value)
 	}
 
 }

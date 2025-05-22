@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var sensor = storage.NewSensor("12345678", 0, 10)
+var sensor = storage.NewSensor(0, 10)
 
 func TestAddData(t *testing.T) {
 	sensor.AddData(1.0)
@@ -49,8 +49,32 @@ func TestGetProto(t *testing.T) {
 	sensor.AddData(3.0)
 	sensor.AddData(4.0)
 	sensor.AddData(5.0)
-	r := sensor.GetProto()
-	if len(r.SensorData) != 5 {
-		t.Errorf("Wrong len %d was expected : %d", len(r.SensorData), 5)
+	r := sensor.GetHistory()
+	if len(r.GetSuccess().SensorData) != 5 {
+		t.Errorf("Wrong len %d was expected : %d", len(r.GetSuccess().SensorData), 5)
+	}
+}
+
+func TestChangeBoundary(t *testing.T) {
+	sensor.Clear()
+	sensor.AddData(1.0)
+	var boundary = grpc.Boundary{Value1: 1, Value2: 2, Value3: 3, Value4: 4}
+	sensor.UpdateBoundary(&boundary)
+	r := sensor.Get()
+	if r.Boundary.Value1 != 1 || r.Boundary.Value2 != 2 || r.Boundary.Value3 != 3 || r.Boundary.Value4 != 4 {
+		t.Errorf("Wrong baundary1 %f was expected : %d", r.Boundary.Value1, 1)
+		t.Errorf("Wrong baundary2 %f was expected : %d", r.Boundary.Value2, 2)
+		t.Errorf("Wrong baundary3 %f was expected : %d", r.Boundary.Value3, 3)
+		t.Errorf("Wrong baundary4 %f was expected : %d", r.Boundary.Value4, 4)
+	}
+}
+
+func TestChangeName(t *testing.T) {
+	sensor.Clear()
+	sensor.AddData(1.0)
+	sensor.UpdateName("newName")
+	r := sensor.Get()
+	if r.Name != "newName" {
+		t.Errorf("Wrong Name %s was expected : %s", r.Name, "newName")
 	}
 }

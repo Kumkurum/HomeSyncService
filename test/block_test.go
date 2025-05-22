@@ -48,33 +48,42 @@ func TestGetBlockSensors(t *testing.T) {
 
 	result := block.GetBlockSensors()
 
-	if result.SensorsData[0].BasicData.Value != 3.3 {
-		t.Error("error in sensor data")
-	}
-	if result.SensorsData[0].Id != "first" {
-		t.Error("error in sensor data")
-	}
-	if result.SensorsData[0].Type != 1 {
-		t.Error("error in sensor data")
-	}
+	first := false
+	second := false
+	third := false
+	for _, sensor := range result.SensorsData {
+		if sensor.Id == "first" {
+			first = true
+			if sensor.BasicData.Value != 3.3 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 3.3, sensor.BasicData.Value)
+			}
+			if sensor.Type != 1 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 1, sensor.Type)
+			}
+		}
 
-	if result.SensorsData[1].BasicData.Value != 4.3 {
-		t.Error("error in sensor data")
-	}
-	if result.SensorsData[1].Id != "second" {
-		t.Error("error in sensor data")
-	}
-	if result.SensorsData[1].Type != 2 {
-		t.Error("error in sensor data")
-	}
+		if sensor.Id == "second" {
+			second = true
+			if sensor.BasicData.Value != 4.3 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 4.3, sensor.BasicData.Value)
+			}
+			if sensor.Type != 2 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 2, sensor.Type)
+			}
+		}
 
-	if result.SensorsData[2].BasicData.Value != 5.3 {
-		t.Error("error in sensor data")
+		if sensor.Id == "third" {
+			third = true
+			if sensor.BasicData.Value != 5.3 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 3.3, sensor.BasicData.Value)
+			}
+			if sensor.Type != 3 {
+				t.Errorf("error in sensor data, expect  %v, but got %v ", 3, sensor.Type)
+			}
+		}
+
 	}
-	if result.SensorsData[2].Id != "third" {
-		t.Error("error in sensor data")
-	}
-	if result.SensorsData[2].Type != 3 {
+	if !(first && second && third) {
 		t.Error("error in sensor data")
 	}
 }

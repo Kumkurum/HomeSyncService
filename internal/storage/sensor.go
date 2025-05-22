@@ -10,17 +10,21 @@ import (
 // Sensor - Структура для хранения инфы об Датчике или девайсе
 type Sensor struct {
 	sync.RWMutex
-	Data    *list.List                   //Data - стэк данных с изменениями значений Sensor по времени
-	Type    homeSyncGrpc.SensorData_Type //Type - тип датчика
-	maxSize int                          //Максимальный размер стэка с данными
+	Data     *list.List                   //Data - стэк данных с изменениями значений Sensor по времени
+	Type     homeSyncGrpc.SensorData_Type //Type - тип датчика
+	Boundary homeSyncGrpc.Boundary        //границы
+	Name     string
+	maxSize  int //Максимальный размер стэка с данными
 }
 
 // NewSensor - Создание нового датчика
-func NewSensor(id string, typeSensor int, maxSize int) *Sensor {
+func NewSensor(typeSensor int, maxSize int) *Sensor {
 	return &Sensor{
-		Data:    list.New(),
-		Type:    homeSyncGrpc.SensorData_Type(typeSensor),
-		maxSize: maxSize,
+		Data:     list.New(),
+		Type:     homeSyncGrpc.SensorData_Type(typeSensor),
+		Boundary: homeSyncGrpc.Boundary{},
+		Name:     "sensor",
+		maxSize:  maxSize,
 	}
 }
 
@@ -31,6 +35,8 @@ func (s *Sensor) Get() *homeSyncGrpc.SensorData {
 	r := s.Data.Back()
 	return &homeSyncGrpc.SensorData{
 		BasicData: r.Value.(*homeSyncGrpc.BasicSensorData),
+		Boundary:  &s.Boundary,
+		Name:      s.Name,
 		Type:      s.Type,
 	}
 }
@@ -45,6 +51,23 @@ func (s *Sensor) AddData(value float32) {
 	}
 }
 
+// UpdateBoundary -Обновление граничных значений в датчике
+func (s *Sensor) UpdateBoundary(boundary *homeSyncGrpc.Boundary) {
+	s.Lock()
+	defer s.Unlock()
+	s.Boundary.Value1 = boundary.Value1
+	s.Boundary.Value2 = boundary.Value2
+	s.Boundary.Value3 = boundary.Value3
+	s.Boundary.Value4 = boundary.Value4
+}
+
+// UpdateName - Обновление имени датчика
+func (s *Sensor) UpdateName(name string) {
+	s.Lock()
+	defer s.Unlock()
+	s.Name = name
+}
+
 // Clear - Отчистка всей истории о датчике
 func (s *Sensor) Clear() {
 	s.Lock()
@@ -52,14 +75,17 @@ func (s *Sensor) Clear() {
 	s.Data = list.New().Init()
 }
 
-// GetProto - Получение прото сообщения со всей историей обновления данных датчика
-func (s *Sensor) GetProto() *homeSyncGrpc.HistorySensorsDataResponse {
+// GetHistory - Получение proto сообщения со всей историей обновления данных датчика
+func (s *Sensor) GetHistory() *homeSyncGrpc.HistorySensorsDataResponse {
 	s.RLock()
 	defer s.RUnlock()
 	sensorData := make([]*homeSyncGrpc.BasicSensorData, 0, s.Data.Len())
 	for e := s.Data.Front(); e != nil; e = e.Next() {
 		sensorData = append(sensorData, e.Value.(*homeSyncGrpc.BasicSensorData))
 	}
-	resultData := &homeSyncGrpc.HistorySensorsDataResponse{SensorData: sensorData}
-	return resultData
+	success := &homeSyncGrpc.HistorySensorsDataResponseSuccess{SensorData: sensorData}
+	result := &homeSyncGrpc.HistorySensorsDataResponse{
+		Response: &homeSyncGrpc.HistorySensorsDataResponse_Success{Success: success},
+	}
+	return result
 }

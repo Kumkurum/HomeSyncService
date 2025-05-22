@@ -9,10 +9,11 @@ import (
 )
 
 func main() {
-	var hAddr, gAddr string
+	var hAddr, gAddr, token string
 	var version, help bool
 	flag.StringVar(&hAddr, "h_addr", "50050", "address of http service")
 	flag.StringVar(&gAddr, "g_addr", "50051", "address of grpc service")
+	flag.StringVar(&token, "token", "default", "verification token for grpc service")
 	flag.BoolVar(&version, "version", false, "Version service")
 	flag.BoolVar(&help, "help", false, "Help how to use service")
 	flag.Parse()
@@ -24,6 +25,7 @@ func main() {
 		fmt.Println("This is a service for Home Sync Service")
 		fmt.Println("flag h_addr to set port for http service, default = 50050 ")
 		fmt.Println("flag g_addr to set port for grpc service, default = 50050 ")
+		fmt.Println("flag token to set verification token, default = default")
 		fmt.Println("just easy to use!")
 		return
 	}
@@ -34,5 +36,5 @@ func main() {
 	go h.Run(hAddr)
 
 	// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
-	grpc_service.NewGrpcService(str, gAddr)
+	grpc_service.NewGrpcService(str, gAddr, token)
 }

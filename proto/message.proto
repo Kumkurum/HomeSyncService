@@ -7,21 +7,25 @@ message BasicSensorData{
   google.protobuf.Timestamp time  = 1;
   float value                     = 2;
 }
+message Boundary{
+  float value1                     = 1;
+  float value2                     = 2;
+  float value3                     = 3;
+  float value4                     = 4;
+}
 
-
-message SensorData{
+message SensorData {
   enum Type {
     TEMPERATURE = 0;
     HUMIDITY    = 1;
     CO2         = 2;
-    PUMP        = 3;
-    LAMP        = 4;
-    FUN         = 5;
+    DEVICE      = 3;
   }
   string id   = 1;
-  Type type   = 2;
-  BasicSensorData   basicData = 3;
-
+  string name = 2;
+  Type type   = 3;
+  Boundary boundary = 4;
+  BasicSensorData   basicData = 5;
 }
 
 message GroupData{
@@ -29,39 +33,64 @@ message GroupData{
   repeated SensorData sensorsData = 2;
 }
 
-message SensorsRequest{}
+message SensorsRequest {
+  string token = 1;
+}
 
-message SensorsResponse{
+message SensorsResponseSuccess {
   google.protobuf.Timestamp time  = 1;
   repeated GroupData groupsData   = 2;
 }
 
-message HistorySensorDataRequest{
-  string blockId  = 1;
-  string sensorId = 2;
+message SensorsResponse {
+  oneof response{
+    Error error                     = 1;
+    SensorsResponseSuccess success  = 2;
+  }
 }
 
-message HistorySensorsDataResponse{
+
+
+message HistorySensorDataRequest {
+  string token      = 1;
+  string blockId    = 2;
+  string sensorId   = 3;
+}
+
+message HistorySensorsDataResponseSuccess {
   string id                           = 1;
   repeated BasicSensorData sensorData = 2;
 }
 
-message SensorHttpData{
-  string sensorId = 1;
-  float value = 2;
-}
-message BlockHttpData{
-  string blockId = 1;
-  repeated SensorHttpData sensorsData = 2;
+message HistorySensorsDataResponse {
+  oneof response{
+    Error error                               = 1;
+    HistorySensorsDataResponseSuccess success = 2;
+  }
 }
 
-message SetSensorData{
-  repeated BlockHttpData blocksData = 1;
+
+message SetSensorData {
+  string token      = 1;
+  string blockId    = 2;
+  string sensorId   = 3;
+  string name       = 4;
 }
-message Error{
-  enum ErrorCode{
+
+message SetBoundaryRequest {
+  string token      = 1;
+  string blockId    = 2;
+  string sensorId   = 3;
+  Boundary boundary = 4;
+}
+
+message Error {
+  enum ErrorCode {
     OK = 0;
     ERROR = 1;
+    UNKNOWN_REQUEST = 2;
+    UNKNOWN_ID = 3;
+    UNKNOWN_TOKEN = 4;
   }
   ErrorCode code = 1;
 }

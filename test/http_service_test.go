@@ -37,13 +37,13 @@ func TestHttp(t *testing.T) {
 	req.Header.Add("content-type", `set/json`)
 	client.Do(req)
 
-	if len(str.GetSensorsData().GroupsData) != 1 {
-		t.Errorf("expect %d groups, got %d", len(testData), len(str.GetSensorsData().GroupsData))
+	if len(str.GetSensorsData().GetSuccess().GroupsData) != 1 {
+		t.Errorf("expect %d groups, got %d", len(testData), len(str.GetSensorsData().GetSuccess().GroupsData))
 	}
-	if str.GetSensorsData().GroupsData[0].Id != testData[0].BlockId {
-		t.Errorf("error data in BlockId expect %s, got %s", testData[0].BlockId, str.GetSensorsData().GroupsData[0].Id)
+	if str.GetSensorsData().GetSuccess().GroupsData[0].Id != testData[0].BlockId {
+		t.Errorf("error data in BlockId expect %s, got %s", testData[0].BlockId, str.GetSensorsData().GetSuccess().GroupsData[0].Id)
 	}
-	if str.GetSensorsData().GroupsData[0].SensorsData[0].Id != testData[0].SensorId {
-		t.Errorf("error data in SensorId expect %s, got %s", testData[0].SensorId, str.GetSensorsData().GroupsData[0].SensorsData[0].Id)
+	if str.GetSensorsData().GetSuccess().GroupsData[0].SensorsData[0].Id != testData[0].SensorId {
+		t.Errorf("error data in SensorId expect %s, got %s", testData[0].SensorId, str.GetSensorsData().GetSuccess().GroupsData[0].SensorsData[0].Id)
 	}
 }

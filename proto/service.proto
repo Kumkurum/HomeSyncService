@@ -6,5 +6,6 @@ import "message.proto";
 service HomeSyncGrpcService {
   rpc GetSensors(SensorsRequest) returns (SensorsResponse);
   rpc GetHistorySensorData(HistorySensorDataRequest) returns (HistorySensorsDataResponse);
-  rpc SetData(SetSensorData) returns (Error);
+  rpc SetName(SetSensorData) returns (Error);
+  rpc SetBoundary(SetBoundaryRequest) returns (Error);
 }

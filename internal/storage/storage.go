@@ -40,20 +40,25 @@ func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*home
 		return nil, fmt.Errorf("not Found sensor with %s id", sensorId)
 	}
 	sensor, _ := s.blocks[blockId].GetSensor(sensorId)
-	return sensor.GetProto(), nil
+	return sensor.GetHistory(), nil
 }
 
 func (s *Storage) GetSensorsData() *homeSyncGrpc.SensorsResponse {
 	s.RLock()
 	defer s.RUnlock()
-	result := &homeSyncGrpc.SensorsResponse{
+	success := &homeSyncGrpc.SensorsResponseSuccess{
 		Time:       s.lastUpdate,
 		GroupsData: make([]*homeSyncGrpc.GroupData, 0, len(s.blocks)),
 	}
 	for blockId, block := range s.blocks {
 		blockData := block.GetBlockSensors()
 		blockData.Id = blockId
-		result.GroupsData = append(result.GroupsData, blockData)
+		success.GroupsData = append(success.GroupsData, blockData)
+	}
+	result := &homeSyncGrpc.SensorsResponse{
+		Response: &homeSyncGrpc.SensorsResponse_Success{
+			Success: success,
+		},
 	}
 	return result
 }
