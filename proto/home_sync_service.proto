@@ -1,8 +1,8 @@
 syntax = "proto3";
 option go_package = "transport.com/homeSyncGrpc";
 
-import "message.proto";
-
+import "home_sync_message.proto";
+package homeSync;
 service HomeSyncGrpcService {
   rpc GetSensors(SensorsRequest) returns (SensorsResponse);
   rpc GetHistorySensorData(HistorySensorDataRequest) returns (HistorySensorsDataResponse);

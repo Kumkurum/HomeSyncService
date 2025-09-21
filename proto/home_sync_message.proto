@@ -2,7 +2,7 @@ syntax = "proto3";
 option go_package = "transport.com/homeSyncGrpc";
 
 import "google/protobuf/timestamp.proto";
-
+package homeSync;
 message BasicSensorData{
   google.protobuf.Timestamp time  = 1;
   float value                     = 2;
