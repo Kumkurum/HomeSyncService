@@ -3,11 +3,12 @@ package mqtt_service
 import (
 	mqttservice2 "HomeSyncService/internal/mqtt_service/block_handlers"
 	"HomeSyncService/internal/storage"
-
+	"fmt"
 	"github.com/Kumkurum/LogService/pkg/log_client"
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
+	"time"
 )
 
 type MQTTServiceConfig struct {
@@ -38,7 +39,7 @@ func (m *MQTTService) Run(port, userName, password string) {
 			},
 			ACL: auth.ACLRules{ // Правила доступа
 				{Username: auth.RString(userName), Filters: auth.Filters{
-					"home/#": auth.ReadWrite, // ДОБАВЬТЕ ЭТУ СТРОКУ
+					"test/#": auth.ReadWrite,
 					"$SYS/#": auth.Deny,
 					"#":      auth.Deny,
 				}},
@@ -56,13 +57,13 @@ func (m *MQTTService) Run(port, userName, password string) {
 	err := m.server.AddListener(tcp)
 	if err != nil {
 		m.logger.Critical(
-			log_client.KeyValue{Key: "Service", Value: "MQTT"},
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "AddListener"},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
 		)
 	}
 	m.logger.Info(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "MQTT сервер запущен"},
 		log_client.KeyValue{Key: "Port", Value: port})
 
@@ -74,7 +75,7 @@ func (m *MQTTService) Run(port, userName, password string) {
 	})
 	if err != nil {
 		m.logger.Critical(
-			log_client.KeyValue{Key: "Service", Value: "MQTT"},
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "AddHook"},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
 		)
@@ -84,10 +85,30 @@ func (m *MQTTService) Run(port, userName, password string) {
 		err := m.server.Serve()
 		if err != nil {
 			m.logger.Critical(
-				log_client.KeyValue{Key: "Service", Value: "MQTT"},
+				log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 				log_client.KeyValue{Key: "Action", Value: "Serve"},
 				log_client.KeyValue{Key: "Error", Value: err.Error()},
 			)
+		}
+	}()
+
+	go func() {
+		for range time.Tick(time.Second * 5) {
+
+			testJSON := `{
+    		    "sensors": [
+    		        {"id": "temperature", "value": 22.54, "type":0},
+    		        {"id": "pressure", "value": 60.2, "type":1},
+    		        {"id": "c02", "value": 666.55, "type":2}
+    		    ]
+    		}`
+			fmt.Println("PUBLISH")
+			m.logger.Critical(
+				log_client.KeyValue{Key: "Layer", Value: "MQTT"},
+				log_client.KeyValue{Key: "Action", Value: "PUBLISH"},
+			)
+			// Публикуем сообщение
+			err = m.server.Publish("home/main_block", []byte(testJSON), false, 0)
 		}
 	}()
 }

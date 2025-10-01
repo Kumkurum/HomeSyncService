@@ -21,7 +21,7 @@ type BlockManager struct {
 
 func (b *BlockManager) AddBlock(handler mqttservice2.BlockHandler) {
 	b.config.logger.Debug(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "AddBlock"},
 		log_client.KeyValue{Key: "Topic", Value: handler.TopicName()},
 	)
@@ -46,7 +46,7 @@ func (b *BlockManager) Init(config any) error {
 
 	b.AddBlock(mqttservice2.NewMainBlockHandler("home/main_block"))
 	b.config.logger.Info(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "BlockManager Init"})
 	return nil
 }
@@ -60,12 +60,12 @@ func (b *BlockManager) GetHandler(id string) mqttservice2.BlockHandler {
 func (b *BlockManager) OnPublish(_ *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
 	handler := b.GetHandler(pk.TopicName)
 	b.config.logger.Critical(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 	)
 	if handler == nil {
 		b.config.logger.Warn(
-			log_client.KeyValue{Key: "Service", Value: "MQTT"},
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 			log_client.KeyValue{Key: "Topic", Value: pk.TopicName},
 			log_client.KeyValue{Key: "Error", Value: "topic not found"},
@@ -73,13 +73,14 @@ func (b *BlockManager) OnPublish(_ *mqtt.Client, pk packets.Packet) (packets.Pac
 		return packets.Packet{}, fmt.Errorf("topic not found: %s", pk.TopicName)
 	}
 	b.config.logger.Info(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 		log_client.KeyValue{Key: "Topic", Value: pk.TopicName})
 
 	sensors, err := handler.Parse(pk)
 	if err != nil {
-		b.config.logger.Warn(log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		b.config.logger.Warn(
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 			log_client.KeyValue{Key: "Block", Value: pk.TopicName},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
@@ -95,12 +96,12 @@ func (b *BlockManager) OnPublish(_ *mqtt.Client, pk packets.Packet) (packets.Pac
 func (b *BlockManager) OnMessage(_ *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
 	handler := b.GetHandler(pk.TopicName)
 	b.config.logger.Critical(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 	)
 	if handler == nil {
 		b.config.logger.Warn(
-			log_client.KeyValue{Key: "Service", Value: "MQTT"},
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 			log_client.KeyValue{Key: "Topic", Value: pk.TopicName},
 			log_client.KeyValue{Key: "Error", Value: "topic not found"},
@@ -108,13 +109,14 @@ func (b *BlockManager) OnMessage(_ *mqtt.Client, pk packets.Packet) (packets.Pac
 		return packets.Packet{}, fmt.Errorf("topic not found: %s", pk.TopicName)
 	}
 	b.config.logger.Info(
-		log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 		log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 		log_client.KeyValue{Key: "Topic", Value: pk.TopicName})
 
 	sensors, err := handler.Parse(pk)
 	if err != nil {
-		b.config.logger.Warn(log_client.KeyValue{Key: "Service", Value: "MQTT"},
+		b.config.logger.Warn(
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
 			log_client.KeyValue{Key: "Action", Value: "OnMessage"},
 			log_client.KeyValue{Key: "Block", Value: pk.TopicName},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},

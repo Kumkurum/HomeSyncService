@@ -30,8 +30,8 @@ func NewStorage(maxSize int, logger *log_client.LoggingClient) *Storage {
 // UpdateSensorValue - Обновление или добавление нового датчика и определение его в какой-то блок
 func (s *Storage) UpdateSensorValue(blockId string, sensorId string, typeSensor int, value float32) {
 	_ = s.logger.Info(
+		log_client.KeyValue{Key: "Layer", Value: "Storage"},
 		log_client.KeyValue{Key: "Function", Value: "UpdateSensorValue"},
-		log_client.KeyValue{Key: "Class", Value: "Storage"},
 		log_client.KeyValue{Key: "blocId", Value: blockId},
 		log_client.KeyValue{Key: "sensorId", Value: sensorId},
 		log_client.KeyValue{Key: "typeSensor", Value: strconv.Itoa(typeSensor)},
@@ -46,8 +46,8 @@ func (s *Storage) UpdateSensorValue(blockId string, sensorId string, typeSensor 
 
 func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*homeSyncGrpc.HistorySensorsDataResponse, error) {
 	_ = s.logger.Debug(
+		log_client.KeyValue{Key: "Layer", Value: "Storage"},
 		log_client.KeyValue{Key: "Function", Value: "GetHistoricSensorsData"},
-		log_client.KeyValue{Key: "Class", Value: "Storage"},
 		log_client.KeyValue{Key: "blocId", Value: blockId},
 		log_client.KeyValue{Key: "sensorId", Value: sensorId},
 	)
@@ -56,8 +56,8 @@ func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*home
 	_, err := s.blocks[blockId].GetSensor(sensorId)
 	if err != nil {
 		_ = s.logger.Warn(
+			log_client.KeyValue{Key: "Layer", Value: "Storage"},
 			log_client.KeyValue{Key: "Function", Value: "GetHistoricSensorsData"},
-			log_client.KeyValue{Key: "Class", Value: "Storage"},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
 		)
 		return nil, fmt.Errorf("not Found sensor with %s id", sensorId)
@@ -68,8 +68,8 @@ func (s *Storage) GetHistoricSensorsData(blockId string, sensorId string) (*home
 
 func (s *Storage) GetSensorsData() *homeSyncGrpc.SensorsResponse {
 	_ = s.logger.Debug(
+		log_client.KeyValue{Key: "Layer", Value: "Storage"},
 		log_client.KeyValue{Key: "Function", Value: "GetSensorsData"},
-		log_client.KeyValue{Key: "Class", Value: "Storage"},
 	)
 	s.RLock()
 	defer s.RUnlock()
@@ -92,8 +92,8 @@ func (s *Storage) GetSensorsData() *homeSyncGrpc.SensorsResponse {
 
 func (s *Storage) SetSensorName(blockId string, sensorId string, sensorName string) *homeSyncGrpc.Error {
 	_ = s.logger.Debug(
+		log_client.KeyValue{Key: "Layer", Value: "Storage"},
 		log_client.KeyValue{Key: "Function", Value: "SetSensorName"},
-		log_client.KeyValue{Key: "Class", Value: "Storage"},
 		log_client.KeyValue{Key: "blockId", Value: blockId},
 		log_client.KeyValue{Key: "sensorId", Value: sensorId},
 		log_client.KeyValue{Key: "sensorName", Value: sensorName},
@@ -113,8 +113,8 @@ func (s *Storage) SetSensorName(blockId string, sensorId string, sensorName stri
 
 func (s *Storage) SetBoundary(request *homeSyncGrpc.SetBoundaryRequest) *homeSyncGrpc.Error {
 	_ = s.logger.Debug(
+		log_client.KeyValue{Key: "Layer", Value: "Storage"},
 		log_client.KeyValue{Key: "Function", Value: "SetBoundary"},
-		log_client.KeyValue{Key: "Class", Value: "Storage"},
 		log_client.KeyValue{Key: "blockId", Value: request.BlockId},
 		log_client.KeyValue{Key: "sensorId", Value: request.SensorId},
 	)
@@ -122,8 +122,8 @@ func (s *Storage) SetBoundary(request *homeSyncGrpc.SetBoundaryRequest) *homeSyn
 	defer s.RUnlock()
 	if _, ok := s.blocks[request.BlockId]; ok == false {
 		_ = s.logger.Warn(
+			log_client.KeyValue{Key: "Layer", Value: "Storage"},
 			log_client.KeyValue{Key: "Function", Value: "SetBoundary"},
-			log_client.KeyValue{Key: "Class", Value: "Storage"},
 			log_client.KeyValue{Key: "Error", Value: "Unknown Block Id"},
 			log_client.KeyValue{Key: "BlockId", Value: request.BlockId},
 		)
@@ -132,8 +132,8 @@ func (s *Storage) SetBoundary(request *homeSyncGrpc.SetBoundaryRequest) *homeSyn
 	sensor, err := s.blocks[request.BlockId].GetSensor(request.SensorId)
 	if err != nil {
 		_ = s.logger.Warn(
+			log_client.KeyValue{Key: "Layer", Value: "Storage"},
 			log_client.KeyValue{Key: "Function", Value: "SetBoundary"},
-			log_client.KeyValue{Key: "Class", Value: "Storage"},
 			log_client.KeyValue{Key: "Error", Value: "Unknown Sensor Id"},
 			log_client.KeyValue{Key: "SensorId", Value: request.SensorId},
 		)

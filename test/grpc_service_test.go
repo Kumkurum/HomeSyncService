@@ -1,16 +1,12 @@
 package test
 
 import (
-	"HomeSyncService/internal/grpc_service"
-	"HomeSyncService/internal/storage"
 	homeSyncGrpc "HomeSyncService/internal/transport"
 	"context"
-	"testing"
-	"time"
-
-	"github.com/Kumkurum/LogService/pkg/log_client"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"testing"
+	"time"
 )
 
 var testData = []homeSyncGrpc.SensorData{
@@ -86,23 +82,22 @@ var testData = []homeSyncGrpc.SensorData{
 	},
 }
 
-func runServer() {
-	logger, _ := log_client.NewLoggingClient("2222", "HomeSync")
-	var str = storage.NewStorage(10, logger)
-	for _, data := range testData {
-		str.UpdateSensorValue("testBlock", data.Id, int(data.Type), data.BasicData.Value)
-	}
-
-	// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
-	grpc_service.NewGrpcService(str, "50051", "kum", logger)
-}
+//func runServer() {
+//var str = storage.NewStorage(10)
+//for _, data := range testData {
+//	str.UpdateSensorValue("testBlock", data.Id, int(data.Type), data.BasicData.Value)
+//}
+//
+//// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
+//grpc_service.NewGrpcService(str, "50051", "kum")
+//}
 
 func TestRequest(t *testing.T) {
 	//go runServer()
 	opts := []grpc.DialOption{
 		grpc.WithInsecure(),
 	}
-	conn, err := grpc.Dial("ip:port", opts...)
+	conn, err := grpc.Dial("127.0.0.1:50051", opts...)
 
 	if err != nil {
 		t.Errorf("fail to dial: %v", err)
@@ -112,7 +107,7 @@ func TestRequest(t *testing.T) {
 
 	client := homeSyncGrpc.NewHomeSyncGrpcServiceClient(conn)
 	request := &homeSyncGrpc.SensorsRequest{
-		Token: "kum",
+		Token: "default",
 	}
 	response, err := client.GetSensors(context.Background(), request)
 
@@ -131,7 +126,7 @@ func TestRequest(t *testing.T) {
 	}
 
 	requestH := &homeSyncGrpc.HistorySensorDataRequest{
-		Token:    "kum",
+		Token:    "default",
 		BlockId:  "testBlock",
 		SensorId: "testSensor0",
 	}
