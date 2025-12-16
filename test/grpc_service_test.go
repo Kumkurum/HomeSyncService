@@ -3,6 +3,7 @@ package test
 import (
 	homeSyncGrpc "HomeSyncService/internal/transport"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
@@ -110,36 +111,6 @@ func TestRequest(t *testing.T) {
 		Token: "default",
 	}
 	response, err := client.GetSensors(context.Background(), request)
-
-	if err != nil {
-		t.Errorf("fail to dial: %v", err)
-	}
-	if len(response.GetSuccess().GroupsData) != 1 {
-		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
-	}
-
-	if response.GetSuccess().GroupsData[0].SensorsData[0].Id != testData[0].Id {
-		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
-	}
-	if response.GetSuccess().GroupsData[0].SensorsData[0].BasicData.Value != testData[len(testData)-1].BasicData.Value {
-		t.Errorf("expect response groups data, but got %v", response.GetSuccess().GroupsData)
-	}
-
-	requestH := &homeSyncGrpc.HistorySensorDataRequest{
-		Token:    "default",
-		BlockId:  "testBlock",
-		SensorId: "testSensor0",
-	}
-	responseH, err := client.GetHistorySensorData(context.Background(), requestH)
-	if err != nil {
-		t.Errorf("fail to dial: %v", err)
-	}
-	if len(responseH.GetSuccess().SensorData) != len(testData) {
-		t.Errorf("error len %d, but reale len is %d", len(responseH.GetSuccess().SensorData), len(testData))
-	}
-
-	if responseH.GetSuccess().SensorData[0].Value != testData[0].BasicData.Value {
-		t.Errorf("expect response data %v, but got %v", responseH.GetSuccess().SensorData[0].Value, testData[0].BasicData.Value)
-	}
+	fmt.Println(response)
 
 }

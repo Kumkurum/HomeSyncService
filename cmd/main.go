@@ -16,12 +16,14 @@ import (
 func main() {
 	var hAddr, gAddr, loggerAddr, token string
 	var version, help bool
+	var maxSize int
 	flag.StringVar(&hAddr, "h_addr", "50050", "address of http service")
 	flag.StringVar(&gAddr, "g_addr", "50051", "address of grpc service")
 	flag.StringVar(&loggerAddr, "logger_addr", "/tmp/logs.sock", "address of grpc logger client")
 	flag.StringVar(&token, "token", "default", "verification token for grpc service")
 	flag.BoolVar(&version, "version", false, "Version service")
 	flag.BoolVar(&help, "help", false, "Help how to use service")
+	flag.IntVar(&maxSize, "maxSize", 60*24*7, "max size of sensor. Default: 7 Day for 1 min {7*24*60}")
 	flag.Parse()
 	if version {
 		fmt.Println("Version 0.1.0")
@@ -55,11 +57,23 @@ func main() {
 		os.Exit(0)
 	}()
 
-	var str = storage.NewStorage(10, logger)
+	var str = storage.NewStorage(maxSize, logger)
 
 	mqtt := mqttServ.NewMQTTService(str, logger)
-	mqtt.Run("6668", "default", "123")
+	go func() {
+		if err := mqtt.Run("6668", "default", "123"); err != nil {
+			panic("Error starting server: " + err.Error())
+		}
+
+	}()
 
 	// Создать сервер gRPC и зарегистрировать в нем наш KeyValueServer
-	grpc_service.NewGrpcService(str, gAddr, token, logger)
+	grpc, err := grpc_service.NewGrpcService(str, gAddr, token, logger)
+	if err != nil {
+		fmt.Println("Error Make Grpc Service: " + err.Error())
+		panic(err)
+	}
+	if err := grpc.Run(); err != nil {
+		panic("Error starting grpc service: " + err.Error())
+	}
 }

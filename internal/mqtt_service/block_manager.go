@@ -88,7 +88,7 @@ func (b *BlockManager) OnPublish(_ *mqtt.Client, pk packets.Packet) (packets.Pac
 		return packets.Packet{}, err
 	}
 	for _, sensor := range sensors {
-		b.config.storage.UpdateSensorValue(handler.Id(), sensor.Id, sensor.Type, sensor.Value)
+		b.config.storage.UpdateSensorValue(sensor.Id, sensor.Type, sensor.Value)
 	}
 	return pk, nil
 }
@@ -124,7 +124,7 @@ func (b *BlockManager) OnMessage(_ *mqtt.Client, pk packets.Packet) (packets.Pac
 		return packets.Packet{}, err
 	}
 	for _, sensor := range sensors {
-		b.config.storage.UpdateSensorValue(handler.Id(), sensor.Id, sensor.Type, sensor.Value)
+		b.config.storage.UpdateSensorValue(sensor.Id, sensor.Type, sensor.Value)
 	}
 	return pk, nil
 }

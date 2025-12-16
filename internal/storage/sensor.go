@@ -36,7 +36,6 @@ func (s *Sensor) Get() *homeSyncGrpc.SensorData {
 	return &homeSyncGrpc.SensorData{
 		BasicData: r.Value.(*homeSyncGrpc.BasicSensorData),
 		Boundary:  &s.Boundary,
-		Name:      s.Name,
 		Type:      s.Type,
 	}
 }

@@ -6,6 +6,6 @@ package homeSync;
 service HomeSyncGrpcService {
   rpc GetSensors(SensorsRequest) returns (SensorsResponse);
   rpc GetHistorySensorData(HistorySensorDataRequest) returns (HistorySensorsDataResponse);
-  rpc SetName(SetSensorData) returns (Error);
   rpc SetBoundary(SetBoundaryRequest) returns (Error);
+  rpc RemoveSensor(RemoveSensorRequest) returns (Error);
 }

@@ -3,12 +3,10 @@ package mqtt_service
 import (
 	mqttservice2 "HomeSyncService/internal/mqtt_service/block_handlers"
 	"HomeSyncService/internal/storage"
-	"fmt"
 	"github.com/Kumkurum/LogService/pkg/log_client"
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
-	"time"
 )
 
 type MQTTServiceConfig struct {
@@ -30,7 +28,7 @@ func NewMQTTService(str storage.ImplStorage, logger *log_client.LoggingClient) *
 	return service
 }
 
-func (m *MQTTService) Run(port, userName, password string) {
+func (m *MQTTService) Run(port, userName, password string) error {
 	// Добавляем аутентификацию (опционально)
 	_ = m.server.AddHook(new(auth.Hook), &auth.Options{
 		Ledger: &auth.Ledger{
@@ -61,6 +59,7 @@ func (m *MQTTService) Run(port, userName, password string) {
 			log_client.KeyValue{Key: "Action", Value: "AddListener"},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
 		)
+		return err
 	}
 	m.logger.Info(
 		log_client.KeyValue{Key: "Layer", Value: "MQTT"},
@@ -79,36 +78,15 @@ func (m *MQTTService) Run(port, userName, password string) {
 			log_client.KeyValue{Key: "Action", Value: "AddHook"},
 			log_client.KeyValue{Key: "Error", Value: err.Error()},
 		)
+		return err
 	}
-	// Запускаем сервер
-	go func() {
-		err := m.server.Serve()
-		if err != nil {
-			m.logger.Critical(
-				log_client.KeyValue{Key: "Layer", Value: "MQTT"},
-				log_client.KeyValue{Key: "Action", Value: "Serve"},
-				log_client.KeyValue{Key: "Error", Value: err.Error()},
-			)
-		}
-	}()
-
-	go func() {
-		for range time.Tick(time.Second * 5) {
-
-			testJSON := `{
-    		    "sensors": [
-    		        {"id": "temperature", "value": 22.54, "type":0},
-    		        {"id": "pressure", "value": 60.2, "type":1},
-    		        {"id": "c02", "value": 666.55, "type":2}
-    		    ]
-    		}`
-			fmt.Println("PUBLISH")
-			m.logger.Critical(
-				log_client.KeyValue{Key: "Layer", Value: "MQTT"},
-				log_client.KeyValue{Key: "Action", Value: "PUBLISH"},
-			)
-			// Публикуем сообщение
-			err = m.server.Publish("home/main_block", []byte(testJSON), false, 0)
-		}
-	}()
+	if err := m.server.Serve(); err != nil {
+		m.logger.Critical(
+			log_client.KeyValue{Key: "Layer", Value: "MQTT"},
+			log_client.KeyValue{Key: "Action", Value: "Serve"},
+			log_client.KeyValue{Key: "Error", Value: err.Error()},
+		)
+		return err
+	}
+	return nil
 }

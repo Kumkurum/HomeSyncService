@@ -3,6 +3,7 @@ package test
 import (
 	"HomeSyncService/internal/storage"
 	grpc "HomeSyncService/internal/transport"
+	"github.com/Kumkurum/LogService/pkg/log_client"
 	"testing"
 )
 
@@ -69,12 +70,31 @@ func TestChangeBoundary(t *testing.T) {
 	}
 }
 
-func TestChangeName(t *testing.T) {
-	sensor.Clear()
-	sensor.AddData(1.0)
-	sensor.UpdateName("newName")
-	r := sensor.Get()
-	if r.Name != "newName" {
-		t.Errorf("Wrong Name %s was expected : %s", r.Name, "newName")
+func TestSensorStorage(t *testing.T) {
+
+	logger, _ := log_client.NewLoggingClient("tmp/test.sock", "HomeSync")
+	maxSize := 60
+	storage := storage.NewStorage(maxSize, logger)
+
+	var valueCheck float32 = 0.0
+	for i := 0; i < maxSize+10; i++ {
+		storage.UpdateSensorValue("testId0", 1, valueCheck)
+		if storage.GetSensorsData().GetSuccess().Sensors[0].BasicData.Value != valueCheck {
+			t.Errorf("Wrong value %f was expected : %f", sensor.Get().BasicData.Value, valueCheck)
+		}
+		valueCheck += 1
+	}
+	result, err := storage.GetHistoricSensorsData("testId0")
+	if err != nil {
+		t.Errorf("Sensor storage error : %s", err)
+	}
+	if len(result.GetSuccess().SensorData) != maxSize {
+		t.Errorf("Wrong len %d was expected : %d", len(result.GetSuccess().SensorData), maxSize)
+	}
+	storage.RemoveSensor(&grpc.RemoveSensorRequest{
+		SensorId: "testId0",
+	})
+	if len(storage.GetSensorsData().GetSuccess().Sensors) != 0 {
+		t.Errorf("Sensor storage error : %d", len(storage.GetSensorsData().GetSuccess().Sensors))
 	}
 }

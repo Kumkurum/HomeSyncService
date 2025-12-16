@@ -3,6 +3,7 @@ option go_package = "transport.com/homeSyncGrpc";
 
 import "google/protobuf/timestamp.proto";
 package homeSync;
+
 message BasicSensorData{
   google.protobuf.Timestamp time  = 1;
   float value                     = 2;
@@ -22,15 +23,9 @@ message SensorData {
     DEVICE      = 3;
   }
   string id   = 1;
-  string name = 2;
-  Type type   = 3;
-  Boundary boundary = 4;
-  BasicSensorData   basicData = 5;
-}
-
-message GroupData{
-  string id                       = 1;
-  repeated SensorData sensorsData = 2;
+  Type type   = 2;
+  Boundary boundary = 3;
+  BasicSensorData   basicData = 4;
 }
 
 message SensorsRequest {
@@ -39,7 +34,7 @@ message SensorsRequest {
 
 message SensorsResponseSuccess {
   google.protobuf.Timestamp time  = 1;
-  repeated GroupData groupsData   = 2;
+  repeated SensorData sensors     = 2;
 }
 
 message SensorsResponse {
@@ -50,11 +45,9 @@ message SensorsResponse {
 }
 
 
-
 message HistorySensorDataRequest {
   string token      = 1;
-  string blockId    = 2;
-  string sensorId   = 3;
+  string sensorId   = 2;
 }
 
 message HistorySensorsDataResponseSuccess {
@@ -69,19 +62,15 @@ message HistorySensorsDataResponse {
   }
 }
 
-
-message SetSensorData {
-  string token      = 1;
-  string blockId    = 2;
-  string sensorId   = 3;
-  string name       = 4;
-}
-
 message SetBoundaryRequest {
   string token      = 1;
-  string blockId    = 2;
-  string sensorId   = 3;
-  Boundary boundary = 4;
+  string sensorId   = 2;
+  Boundary boundary = 3;
+}
+
+message RemoveSensorRequest {
+  string token      = 1;
+  string sensorId   = 2;
 }
 
 message Error {
