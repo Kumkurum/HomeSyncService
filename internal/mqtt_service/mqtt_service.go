@@ -3,6 +3,7 @@ package mqtt_service
 import (
 	mqttservice2 "HomeSyncService/internal/mqtt_service/block_handlers"
 	"HomeSyncService/internal/storage"
+
 	"github.com/Kumkurum/LogService/pkg/log_client"
 	mqtt "github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
@@ -37,9 +38,8 @@ func (m *MQTTService) Run(port, userName, password string) error {
 			},
 			ACL: auth.ACLRules{ // Правила доступа
 				{Username: auth.RString(userName), Filters: auth.Filters{
-					"test/#": auth.ReadWrite,
+					"#":      auth.ReadWrite, // Разрешаем ВСЕ топики
 					"$SYS/#": auth.Deny,
-					"#":      auth.Deny,
 				}},
 			},
 		},
